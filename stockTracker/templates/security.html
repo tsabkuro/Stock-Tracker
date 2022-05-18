@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% block content %}
+	<article class="media content-section">
+		<div class="media-body">
+			<div class="article-metadata">
+				<small class="text-muted">
+					{{ security.date_posted.strftime('%Y-%m-%d') }}
+				</small>
+			</div>
+			<div>
+				<a href="{{ url_for('update_security', security_title=security.title) }}" class="btn btn-secondary btn-sm mt-1 mb-1">Update</a>
+				<button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+			</div>
+			<h2 class="article-title">
+				{{ security.title }}
+			</h2>
+		</div>
+	</article>
+	
+	<article class="media content-section">
+		<div class="media-body">
+			<div>
+				<a href="{{ url_for('new_transaction') }}" class="btn btn-outline-info btn-sm mt-1 mb-1">New Transaction</a>
+			</div>
+			<table>
+				<tr>
+					<td>Date</td>
+					<td>Transaction</td>
+					<td>Price</td>
+					<td>Shares</td>
+					<td>Price/Share</td>
+				</tr>
+				{% for transaction in transactions %}
+					<tr>
+						<td>{{ transaction.date_posted.strftime('%Y-%m-%d') }}</td>
+						<td>{{ transaction.transaction_type }}</td>
+						<td>${{ '%0.2f'|format(transaction.price|float) }}</td>
+						<td>{{ transaction.shares }}</td>
+						<td>${{ '%0.2f'|format(transaction.price|float / transaction.shares|float) }}</td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</article>
+
+	<!-- Modal -->
+	<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+ 		<div class="modal-dialog" role="document">
+    		<div class="modal-content">
+      			<div class="modal-header">
+        			<h5 class="modal-title" id="deleteModalLabel">Delete Security?</h5>
+        			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          			<span aria-hidden="true">&times;</span>
+	        		</button>
+	     		</div>
+	     		<div class="modal-footer">
+	        		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	        		<form action="{{ url_for('delete_security', security_title=security.title) }}" method="POST">
+	        			<input type="submit" class="btn btn-danger" value="Delete">
+	        		</form>
+	    		</div>
+	    	</div>
+	  	</div>
+	</div>
+{% endblock content %}
